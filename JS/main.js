@@ -1,8 +1,9 @@
 // Imports
-import { Game } from "./game.js";
+import { Soduko } from "./game.js";
 
-// Initialize an exmpty board.
-let game = new Game(); 
+// Instantiate a new Game object. 
+let soduko = new Soduko(); 
 
-// Find a unique solution for that board. 
-game.SolveBoard();
+// Generate a board. 
+let board = soduko.GenerateBoard(); 
+console.log(board); 
