@@ -22,61 +22,64 @@ export class Soduko
     // Methods.
 
 
-    // Name         : InitializeBoard
-    // Description  : This is used to take an empty board and fill it with valid values. 
+    // Name         : GenerateBoard
+    // Description  : This is used to initalize an empty board and generate a unique combo to fill the board with valid numbers. 
     // Parameters   : void.
     // Return Values: void. 
     GenerateBoard()
-    {
-        // Create an empty board. 
-        this.#board = this.#CreateEmptyBoard();  
-
-        // Iterate through the board and locate all the empty cells. 
-        while (true)
-        {
-            // Find an empty cell's position & check to see if the position is valid.
-            let cell = this.LocateEmptyCell();
-            if (cell.row === null && cell.col === null)
-            {
-                console.log("No more empty cells on board."); 
-                break; 
-            } 
-            
-            // - Figure out which number should go in that cell. 
-            for (let i = 0; i < 9; i++)
-            {
-                // List of possible numbers to be added to the board. 
-                let values = [1,2,3,4,5,6,7,8,9];
-
-                // 1. First check to see if the number from 1-9 is in the current row.
-                    // - If it is, check the next number and repeat until the number is not in the current row.
-                let result = this.IsValidInRow(cell.row, values[i]);  
-                if (result === false) 
-                {
-                    // Indicates that the current value is already in 
-                    continue; 
-                };
-                
-                
-                // 2. Then, check to see if the number is in the current column.
-                    // - If it is, go back to step 1. 
-                result = this.IsValidInCol(cell.col, values[i]); 
-                if (result === false)
-                {
-                    // Indicates that the current value is already within the column and cannot be placed.  
-                    continue;
-                }
-                
-                // 3. After, check to see if the number is within the 3x3 box. 
-                    // - If it is, go back to step 1. 
-                
-                
-                // 4. Place the number in that cell.
-                // Fill the empty cell with a value. 
-                this.#board[cell.row][cell.col] = value[i];    // This is needed to prevent an infinite loop.  
-            }
-        }; 
+    {  
+        // Initialize an empty board.
+        this.#CreateEmptyBoard(); 
+        
+        // Creates the combo and solves board. 
+        this.SolveBoard(); 
+        
         return this.#board;  
+    };
+
+
+
+
+    // Name         : 
+    // Description  : 
+    // Parameters   : 
+    // Return Values: 
+    SolveBoard()
+    {
+        // Find an empty cell's position & check to see if the position is valid.
+        let cell = this.LocateEmptyCell();
+        if (cell.row === null && cell.col === null)
+        {
+            console.log("No more empty cells on board."); 
+            return true; 
+        } 
+
+        // - Figure out which number should go in that cell. 
+        for (let i = 0; i < 9; i++)
+        {
+            // List of possible numbers to be added to the cell. 
+            let values = [1,2,3,4,5,6,7,8,9]; 
+
+            if (this.IsValidInRow(cell.row, values[i]) === true && this.IsValidInCol(cell.col, values[i]) === true)
+            {
+                // Assign the value to the current cells row and col.
+                this.#board[cell.row][cell.col] = values[i];
+
+                // Check to see if the board is fully solved. 
+                let isBoardSolved = this.SolveBoard();
+                if (isBoardSolved === true)
+                {
+                    // Exit the recursion. 
+                    return true; 
+                }
+
+                // Reset the current cell and try another number. 
+                this.#board[cell.row][cell.col] = 0; 
+            }; 
+        };
+
+        // Wasn't able to place a valid number (backtracking). 
+        return false; 
     };
 
 
@@ -151,8 +154,8 @@ export class Soduko
                 if (this.#board[currentRow][currentCol] === 0)
                 {
                     // Return the empty cells position.
-                    cell.row = currentRow; 
-                    cell.col = currentCol; 
+                    cell.row = Number(currentRow); 
+                    cell.col = Number(currentCol); 
                     return cell;  
                 }
              }
@@ -173,25 +176,25 @@ export class Soduko
     {
         let board = 
         [
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
-            // [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0],
 
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,0,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
-            [1,0,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,0,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
+            // [1,2,3,4,5,6,7,8,9],
         ];
 
         return board; 
