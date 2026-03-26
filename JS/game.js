@@ -40,10 +40,10 @@ export class Soduko
 
 
 
-    // Name         : 
-    // Description  : 
-    // Parameters   : 
-    // Return Values: 
+    // Name         : SolveBoard
+    // Description  : This method is used to fill in all the empty cells on a board with valid values based on game rules.  
+    // Parameters   : Void.
+    // Return Values: bool true :   Upon completion. Otherwise, false. 
     SolveBoard()
     {
         // Find an empty cell's position & check to see if the position is valid.
@@ -54,12 +54,13 @@ export class Soduko
             return true; 
         } 
 
-        // - Figure out which number should go in that cell. 
+        // Shuffle the values 1-9 and store in values variable. 
+        let values = [1,2,3,4,5,6,7,8,9];
+        values = this.ShuffleValues(values);  
+
+        // Figure out which number should go in that cell. 
         for (let i = 0; i < 9; i++)
         {
-            // List of possible numbers to be added to the cell. 
-            let values = [1,2,3,4,5,6,7,8,9]; 
-
             // See if the current value is valid in the row, column, & box. 
             if (this.IsValidInRow(cell.row, values[i]) === true && this.IsValidInCol(cell.col, values[i]) === true && this.IsValidInBox(cell, values[i]) === true)
             {
@@ -82,6 +83,33 @@ export class Soduko
         // Wasn't able to place a valid number (backtracking). 
         return false; 
     };
+
+    
+
+
+
+    // Name         : ShuffleValues
+    // Description  : This method uses the Fisher-Yates shuffle to take an array of values from 1-9 and shuffle the order. 
+    // Parameters   : values[]          :   This is the value array to be shuffled. 
+    // Return Values: shuffledValues[]  :   This would be the new shuffled array. 
+    ShuffleValues(values)
+    {
+        // Start at the last index in the array (i = length of array).
+        for (let i = values.length - 1; i > 0; i--)
+        {
+            // Pick a random index from 0 to i
+            //  - store in variable j.
+            let j = Math.floor(Math.random() * (i + 1));   
+
+            // swap index i and j. 
+            let temp = values[i];   // temp becomes 9
+            values[i] = values[j];  // values[i] becomes values[j] using a random index generated from Math().
+            values[j] = temp;       // values[j] becomes temp (9). 
+        }
+
+        return values; 
+    };
+
 
 
 
