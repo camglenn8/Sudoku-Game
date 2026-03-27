@@ -1,8 +1,12 @@
 // File Name    : game.js
 // Description  : This file is used to start the game and handle any game logic.
 
+// Imports
+import { DIFFICULTY, CELLS_TO_REMOVE, EMPTY_CELL } from "./constants.js"; 
 
-export class Soduko 
+// Class Name   : Sudoku
+// Purpose      : The purpose of this class is to model how the game Sudoku works. 
+export class Sudoku 
 {
     // Private Data members. 
     #board = [];   
@@ -12,29 +16,86 @@ export class Soduko
         // Initialize the board with a clear board. 
         this.#board = this.#CreateEmptyBoard(); 
     }
-    
-    // Getters/Accesors.
-    get getBoard()
-    {
-        return this.#board; 
-    }
 
     // Methods.
-
 
     // Name         : GenerateBoard
     // Description  : This is used to initalize an empty board and generate a unique combo to fill the board with valid numbers. 
     // Parameters   : void.
     // Return Values: void. 
-    GenerateBoard()
+    GenerateBoard(difficulty = DIFFICULTY.EASY)  
     {  
         // Initialize an empty board.
         this.#CreateEmptyBoard(); 
         
         // Creates the combo and solves board. 
         this.SolveBoard(); 
+        let boardCopy = this.#board.map(row => [...row]); 
+        console.log(boardCopy);
+
+        // Remove cells based on the difficulty provided. 
+        switch (difficulty) 
+        {
+            case DIFFICULTY.EASY:
+                // Remove 35 cells from the board. 
+                this.RemoveCells(CELLS_TO_REMOVE.EASY);
+                break;
+            
+            case DIFFICULTY.MEDIUM:
+                // Remove 45 cells from the board.
+                this.RemoveCells(CELLS_TO_REMOVE.MEDIUM);
+                break;
+            
+            case DIFFICULTY.HARD:
+                // Remove 55 cells from the board. 
+                this.RemoveCells(CELLS_TO_REMOVE.HARD);
+                break; 
+        }; 
         
         return this.#board;  
+    };
+
+
+
+
+    // Name         : RemoveCells
+    // Description  : This method is removes x amount of cells from the board using the cellCount, depending on the provided difficulty.  
+    // Parameters   : int cellCount :   This is the number of cells to remove from the board. 
+    // Return Values: Void. 
+    RemoveCells(cellCount)
+    {
+        while (cellCount > 0)
+        {
+            // Generate a random row & col from 1-9.
+            let row = Math.floor(Math.random() * 9);
+            let col = Math.floor(Math.random() * 9); 
+
+            // Check to see if the current cell is empty at this position. 
+            if (this.#board[row][col] !== EMPTY_CELL)
+            {
+                // Remove the cell's value. 
+                this.#board[row][col] = EMPTY_CELL; 
+
+                // Find the mirrored cell positon using the current cell position.
+                let mirroredRow = 8 - row; 
+                let mirroredCol = 8 - col; 
+
+                // Check to see if the mirrored cell's value is empty  
+                if (this.#board[mirroredRow][mirroredCol] !== EMPTY_CELL)
+                {
+                    // Indicates that the mirrored cell is NOT empty.
+                    this.#board[mirroredRow][mirroredCol] = EMPTY_CELL;  
+                    cellCount -= 2;  
+                }
+                else
+                {
+                    // Indicates that the mirrored cell is already empty. (decrement the cellCount by 1).
+                    cellCount -= 1; 
+                }; 
+            };
+        };
+
+        return; 
     };
 
 
@@ -50,7 +111,7 @@ export class Soduko
         let cell = this.LocateEmptyCell();
         if (cell.row === null && cell.col === null)
         {
-            console.log("No more empty cells on board."); 
+            // There are no more empty cells on the board. 
             return true; 
         } 
 
@@ -84,7 +145,7 @@ export class Soduko
         return false; 
     };
 
-    
+
 
 
 

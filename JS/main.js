@@ -1,9 +1,9 @@
 // Imports
-import { Soduko } from "./game.js";
+import { Sudoku } from "./game.js";
 
 // Instantiate a new Game object. 
-let soduko = new Soduko(); 
+let sudoku = new Sudoku(); 
 
 // Generate a board. 
-let board = soduko.GenerateBoard(); 
+let board = sudoku.GenerateBoard(); 
 console.log(board); 
