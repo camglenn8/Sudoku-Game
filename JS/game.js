@@ -30,8 +30,10 @@ export class Sudoku
         
         // Creates the combo and solves board. 
         this.SolveBoard(); 
+
+        // Copies the current board before removing the cells so you can see the solved game. 
         let boardCopy = this.#board.map(row => [...row]); 
-        console.log(boardCopy);
+        console.log(boardCopy); 
 
         // Remove cells based on the difficulty provided. 
         switch (difficulty) 
