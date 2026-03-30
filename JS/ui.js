@@ -12,7 +12,6 @@ export function DisplayBoard(board)
 {
     // Select the table element. 
     let table = document.getElementById("sudokuBoard");
-    table.classList.add("table")
 
     // Dynamically create the cells that go into table.
     for (let r = 0; r < 9; r++)

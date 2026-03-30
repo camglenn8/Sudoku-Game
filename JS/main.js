@@ -1,4 +1,5 @@
 // Imports
+import { DIFFICULTY } from "./constants.js";
 import { Sudoku } from "./game.js";
 import * as UI from "./ui.js"; 
 
@@ -6,7 +7,7 @@ import * as UI from "./ui.js";
 let sudoku = new Sudoku(); 
 
 // Generate a board. 
-let board = sudoku.GenerateBoard("easy"); 
+let board = sudoku.GenerateBoard(DIFFICULTY.MEDIUM); 
 
 // Display the board. 
 UI.DisplayBoard(board);  

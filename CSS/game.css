@@ -3,14 +3,20 @@ File Name    : game.css
 Purpose      : This file is used to style the Sudoku game. 
 */
 
-html
+*
 {
-    font-size: 16px;
+    box-sizing: border-box;
 }
 
-body
+html, body
 {
-    margin: 0;
+    height: 100vh;
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0px; 
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;    
 }
 
 .title
@@ -18,7 +24,7 @@ body
     text-align: center;
 }
 
-/* Board Styling  */
+/********** Board Styling  *********/
 
 .boardContainer
 {
@@ -36,12 +42,14 @@ body
     padding: 0;
 }
 
-.table
+table
 {
     margin: 0px;
     padding: 0px;
     border-collapse: collapse;
     border: black solid 2px;
+    width: 448px; 
+    table-layout: fixed;
 }
 
 td:nth-child(3n) /* This is used for the 3x3 right border */
@@ -52,4 +60,34 @@ td:nth-child(3n) /* This is used for the 3x3 right border */
 tr:nth-child(3n) /* This is used for the 3x3 bottom border */
 {
     border-bottom: black solid 2px;
+}
+
+/********** Number Section *********/
+.numberSection
+{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    width: auto;
+}
+
+.numberContainer
+{
+    display: flex;
+    justify-content: space-between;
+    width: 454px; 
+    padding: 5px 0px;
+}
+
+.number
+{
+    width: 40px;
+    height: 40px;
+    margin: 0px;
+    padding: 0px;
+    font-size: 2rem;
+    font-family: inherit; /* This ignores the browsers default font and chooses the one set by us in HTML */
+    background-color: inherit;
+    border: black solid 1px;
+    border-radius: 3px; 
 }
