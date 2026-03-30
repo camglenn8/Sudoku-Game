@@ -8,7 +8,7 @@ import { EMPTY_CELL } from "./constants.js";
 // Description     : This function is used to display all data regarding the current Sudoku board. 
 // Parameters      : board[][]  :   This is the 2D array containing the current sudoku board.  
 // Return  Value   : Void. 
-export function DisplayBoard(board)
+export function displayBoard(board)
 {
     // Select the table element. 
     let table = document.getElementById("sudokuBoard");
@@ -32,11 +32,11 @@ export function DisplayBoard(board)
             // Add the value to cell at the same position on the board.
             if (board[r][c] === EMPTY_CELL)
             {
-                cell.innerText = " "; 
+                 cell.textContent = ""; 
             }
             else
             {
-                cell.innerText = board[r][c]; 
+                cell.textContent = board[r][c]; 
             }
             
             // Append the cell to the table row. 
@@ -47,5 +47,40 @@ export function DisplayBoard(board)
         table.appendChild(tableRow);     
     };
     
+    return; 
+}
+
+
+
+
+
+// Name            : highilightValues
+// Description     : This function is used to highlight all the same values on board based on the selected value.  
+// Parameters      : int value  :   This is the value the user clicked and should highlight all like values on the board.
+// Return  Value   : Void. 
+export function highlightValues(value, board)
+{
+    // Select the board element to be able to update.
+    let table = document.getElementById("sudokuBoard"); 
+
+    // Loop through the board to find like values. 
+    for (let r = 0; r < 9; r++)
+    {
+        for (let c = 0; c < 9; c++)
+        {
+            // Query the table to find the current cells positon using the dataset info. 
+            let cell = table.querySelector(`td[data-row="${r}"][data-col="${c}"]`);
+
+            // Reset all highlighted values. 
+            cell.classList.remove("highlightCell"); 
+
+            // Compare values. 
+            if (board[r][c] === value && board[r][c] !== EMPTY_CELL)
+            {   
+                // Highlight this cell.
+                cell.classList.add("highlightCell");  
+            }
+        }
+    }
     return; 
 }
