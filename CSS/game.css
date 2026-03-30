@@ -13,7 +13,19 @@ body
     margin: 0;
 }
 
+.title
+{
+    text-align: center;
+}
+
 /* Board Styling  */
+
+.boardContainer
+{
+    display: flex;
+    justify-content: center;
+}
+
 .cell
 {
     border: black solid 1px;
@@ -29,4 +41,15 @@ body
     margin: 0px;
     padding: 0px;
     border-collapse: collapse;
+    border: black solid 2px;
+}
+
+td:nth-child(3n) /* This is used for the 3x3 right border */
+{
+    border-right: black solid 2px;
+}
+
+tr:nth-child(3n) /* This is used for the 3x3 bottom border */
+{
+    border-bottom: black solid 2px;
 }

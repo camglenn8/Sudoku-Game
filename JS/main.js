@@ -6,7 +6,7 @@ import * as UI from "./ui.js";
 let sudoku = new Sudoku(); 
 
 // Generate a board. 
-let board = sudoku.GenerateBoard("medium"); 
+let board = sudoku.GenerateBoard("easy"); 
 
 // Display the board. 
 UI.DisplayBoard(board);  
