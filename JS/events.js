@@ -5,7 +5,7 @@
 import { EMPTY_CELL } from "./constants.js";
 import * as UI from "./ui.js";  
 
-// Global Variables
+// Variables
 let board; 
 let selectedCell = {row:undefined, col:undefined, value:undefined};  
 
@@ -70,5 +70,8 @@ numberSection.addEventListener("click", (e) => {
         // Add the number & update the board. 
         board[selectedCell.row][selectedCell.col] = number; 
         UI.updateBoard(number, selectedCell); 
+
+        // Update the selectedCell variable with new value.
+        selectedCell.value = number; 
     };
 }); 
