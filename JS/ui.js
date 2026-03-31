@@ -84,3 +84,21 @@ export function highlightValues(value, board)
     }
     return; 
 }
+
+
+
+
+export function updateBoard(num, cell)
+{
+    // Check to see if the current cell position is empty.
+    if (cell.value === EMPTY_CELL)
+    {
+        // Select the board.
+        let currentCell = document.querySelector(`[data-row="${cell.row}"][data-col="${cell.col}"]`); 
+
+        // Update the value at this cell positoin with the number. 
+        currentCell.textContent = num; 
+    };
+
+    return; 
+}
