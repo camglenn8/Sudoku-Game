@@ -7,17 +7,19 @@ import * as UI from "./ui.js";
 
 // Variables
 let board; 
-let selectedCell = {row:undefined, col:undefined, value:undefined, isOriginal:false};   
+let selectedCell = {row:undefined, col:undefined, value:undefined, isOriginal:false};  
+let game;  
 
 
 // Name         : initEvents
 // Description  : This function is used to inintalize all global variables within the events.js file.
 // Parameters   : board :   This is the game board. 
 // Return Value : Void. 
-export function init(gameBoard)
+export function init(sudokuGame, gameBoard)
 {
     // Copy the inital board data over for later use. 
     board = gameBoard; 
+    game = sudokuGame; 
     return;  
 }
 
@@ -65,5 +67,21 @@ numberSection.addEventListener("click", (e) => {
 
         // Update the selectedCell variable with new value.
         selectedCell.value = number; 
+
+        // Check to see if the game is over. 
+        if (game.IsBoardFull() === true)
+        {
+            // Check to see if its a winning board. 
+            if (game.IsBoardValid() === true)
+            {
+                // This is a winning board.
+                console.log("YOU WIN!!");
+            } 
+            else
+            {
+                // This board is invald.
+                console.log("Try Again."); 
+            }
+        };
     };
 }); 

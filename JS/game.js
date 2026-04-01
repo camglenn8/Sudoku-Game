@@ -9,7 +9,8 @@ import { DIFFICULTY, CELLS_TO_REMOVE, EMPTY_CELL } from "./constants.js";
 export class Sudoku 
 {
     // Private Data members. 
-    #board = [];   
+    #board = [];            // with removed cells/playable board
+    #solutionBoard = [];    // Fully solved board. 
 
     constructor() 
     {
@@ -32,8 +33,8 @@ export class Sudoku
         this.SolveBoard(); 
 
         // Copies the current board before removing the cells so you can see the solved game. 
-        let boardCopy = this.#board.map(row => [...row]); 
-        console.log(boardCopy); 
+        this.#solutionBoard = this.#board.map(row => [...row]); 
+        console.log(this.#solutionBoard); 
 
         // Remove cells based on the difficulty provided. 
         switch (difficulty) 
@@ -261,6 +262,54 @@ export class Sudoku
 
 
 
+    // Name         : IsBoardFull
+    // Description  : This method is used to determine if the current games cells have all been filled with a number.
+    // Parameters   : Void.
+    // Return Values: bool true    : If all cells have been filled. Otherwise, false.  
+    IsBoardFull()
+    {
+        // See if there are any empty cells left on the board. 
+        let cell = this.LocateEmptyCell();
+        if (cell.row === null && cell.col === null)
+        {
+            // There are no more empty cells on the board & the board is completly filled in.  
+            return true; 
+        } 
+
+        return false; 
+    };
+
+
+
+
+
+    // Name         : IsBoardValid
+    // Description  : This method is used to determine if the completed board is a winning board or not. 
+    // Parameters   : Void.
+    // Return Values: bool true    : If the games valid. Otherwise, false.  
+    IsBoardValid()
+    {
+        // Compare all values from the current board to the fully solved board. 
+        for (let row = 0; row < 9;  row++)
+        {
+            for (let col = 0; col < 9; col++)
+            {
+                // Indicates a difference between the board and the soltionBoard, making the board invalid. 
+                if (this.#board[row][col] !== this.#solutionBoard[row][col])
+                {
+                    return false; 
+                };
+            };
+        };
+
+        // This game is valid. 
+        return true; 
+    };
+
+
+
+
+
     // Name         : LocateEmptyCell
     // Description  : This method is used to find an empty cell within the board (if there is one). 
     // Parameters   : void. 
@@ -283,9 +332,9 @@ export class Sudoku
                     cell.row = Number(currentRow); 
                     cell.col = Number(currentCol); 
                     return cell;  
-                }
-             }
-        }
+                };
+             };
+        };
  
         return cell; 
     };
