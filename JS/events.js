@@ -7,7 +7,7 @@ import * as UI from "./ui.js";
 
 // Variables
 let board; 
-let selectedCell = {row:undefined, col:undefined, value:undefined};  
+let selectedCell = {row:undefined, col:undefined, value:undefined, isOriginal:false};   
 
 
 // Name         : initEvents
@@ -33,18 +33,10 @@ sudokuBoard.addEventListener("click", (e) => {
     selectedCell.row = e.target.dataset.row;
     selectedCell.col = e.target.dataset.col; 
     selectedCell.value = Number(e.target.innerText); 
+    selectedCell.isOriginal = e.target.dataset.isOriginal; 
 
-    // Check to see if the cell has a value. 
-    if (selectedCell.value === "")
-    {
-        console.log(`Empty Cell (Row:${selectedCell.row} Col:${selectedCell.col})`); 
-        return; 
-    }
-
-    // Highlight all cells that contain the same value as the clicked cell. 
-    UI.highlightValues(selectedCell.value, board);
-
-    // Add the highlighted number value into the cell (if a number has already been pressed). 
+    // Highlight the cell. 
+    UI.focusCell(selectedCell); 
 }); 
 
 
@@ -64,10 +56,10 @@ numberSection.addEventListener("click", (e) => {
         return; 
     };
 
-    // Add the selected number to the board (if possible). 
+    // Add the selected number to the board (if the highlighted cell is empty)
     if (selectedCell.value === EMPTY_CELL)
     {
-        // Add the number & update the board. 
+        // Add the number to the board[] & update the board. 
         board[selectedCell.row][selectedCell.col] = number; 
         UI.updateBoard(number, selectedCell); 
 

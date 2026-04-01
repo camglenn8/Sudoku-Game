@@ -29,6 +29,9 @@ export function displayBoard(board)
             cell.dataset.row = r; 
             cell.dataset.col = c; 
 
+            // Also add the orginal "fixed" state so that users can't touch these values. 
+            cell.dataset.isOriginal = true;  
+
             // Add the value to cell at the same position on the board.
             if (board[r][c] === EMPTY_CELL)
             {
@@ -88,17 +91,49 @@ export function highlightValues(value, board)
 
 
 
+
+// Name            : updateBoard
+// Description     : This function is used to update the cell with the selected value (if valid).  
+// Parameters      : int num    :   This is the number value to be used to update the cell on the board.
+//                   cell{}     :   This is a cell object used to determine where to place the num value. 
+// Return  Value   : Void. 
 export function updateBoard(num, cell)
 {
-    // Check to see if the current cell position is empty.
-    if (cell.value === EMPTY_CELL)
-    {
-        // Select the board.
-        let currentCell = document.querySelector(`[data-row="${cell.row}"][data-col="${cell.col}"]`); 
+    // Select the board.
+    let currentCell = document.querySelector(`[data-row="${cell.row}"][data-col="${cell.col}"]`); 
 
-        // Update the value at this cell positoin with the number. 
-        currentCell.textContent = num; 
+    // Update the value at this cell positoin with the number. 
+    currentCell.textContent = num; 
+
+    // Add a dataset value that identifies that this value is not orignal to the beggining puzzle. 
+    currentCell.dataset.isOriginal = false;
+    
+    return; 
+}
+
+
+
+
+// Name            : focusCell
+// Description     : This function is used to focus on the selected cell by the user.  
+// Parameters      : cell{}     :   This is a cell object that holds all cell data (row, col, value, isOriginalCell).  
+// Return  Value   : Void. 
+export function focusCell(cell)
+{
+    // Remove the previous cells focus (if possible).
+    let prevCell =document.querySelector("td[class='cell focus']"); 
+    if (prevCell !== null)
+    {
+        prevCell.classList.toggle("focus"); 
+    }
+
+    // Select the currently selected cells element. 
+    let selectedCell = document.querySelector(`td[data-row="${cell.row}"][data-col="${cell.col}"]`); 
+    if (selectedCell !== null)
+    {
+        // Add the focus class to this cell. 
+        selectedCell.classList.add("focus"); 
     };
 
-    return; 
+    return;
 }
