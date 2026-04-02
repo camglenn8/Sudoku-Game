@@ -62,12 +62,37 @@ tr:nth-child(3n) /* This is used for the 3x3 bottom border */
     border-bottom: black solid 2px;
 }
 
+/* Additional Buttons Section */
+
+.additionalBtns
+{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.additionalBtn
+{
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+.additionalBtnImg
+{
+    height: 40px;
+    width: 40px;
+    background-color: #f5f5f5; 
+    display: block;
+}
+
+
 /********** Number Section *********/
 .numberSection
 {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
+    margin-top: 10px;
     width: auto;
 }
 

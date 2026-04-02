@@ -8,7 +8,7 @@ export const DIFFICULTY = {
 }; 
 
 export const CELLS_TO_REMOVE = {
-    EASY:2,
+    EASY:35,
     MEDIUM:45,
     HARD:55
 }; 

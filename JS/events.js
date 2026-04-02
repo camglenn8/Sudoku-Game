@@ -35,8 +35,8 @@ sudokuBoard.addEventListener("click", (e) => {
     selectedCell.row = e.target.dataset.row;
     selectedCell.col = e.target.dataset.col; 
     selectedCell.value = Number(e.target.innerText); 
-    selectedCell.isOriginal = e.target.dataset.isOriginal; 
-
+    selectedCell.isOriginal = e.target.dataset.isOriginal === "true"; // Returns a boolean instead of a string. 
+    console.log(selectedCell); 
     // Highlight the cell. 
     UI.focusCell(selectedCell); 
 }); 
@@ -84,4 +84,24 @@ numberSection.addEventListener("click", (e) => {
             }
         };
     };
+}); 
+
+
+
+
+// Event Delegation for the number section.
+// Element Name : eraseBtn
+// Event Type   : Click 
+// Description  : This event gets invoked anytime a user clicks the eraser button. 
+let eraseBtn = document.getElementById("eraseBtn"); 
+eraseBtn.addEventListener("click", () => { 
+    // Check to see if there's a valid orignal value to erase from the sudoku board.
+    if (selectedCell.isOriginal == false)
+    {
+        // Remove this value from the board[]. 
+        board[selectedCell.row][selectedCell.col] = EMPTY_CELL; 
+        
+        // Update the board UI.
+        UI.updateBoard(EMPTY_CELL, selectedCell); 
+    }
 }); 

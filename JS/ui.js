@@ -102,11 +102,23 @@ export function updateBoard(num, cell)
     // Select the board.
     let currentCell = document.querySelector(`[data-row="${cell.row}"][data-col="${cell.col}"]`); 
 
-    // Update the value at this cell positoin with the number. 
-    currentCell.textContent = num; 
+    // Check to see if you should be removing OR adding a value. 
+    if (num !== EMPTY_CELL)
+    {
+        // Update the value at this cell positoin with the number. 
+        currentCell.textContent = num; 
 
-    // Add a dataset value that identifies that this value is not orignal to the beggining puzzle. 
-    currentCell.dataset.isOriginal = false;
+        // Add a dataset value that identifies that this value is not orignal to the beggining puzzle. 
+        currentCell.dataset.isOriginal = false; 
+    }
+    else
+    {
+        // Remove the currnet value at this cell position. 
+        currentCell.textContent = ""; 
+
+        // Revert the isOriginal dataset back to true. 
+        currentCell.dataset.isOriginal = true; 
+    }
     
     return; 
 }
