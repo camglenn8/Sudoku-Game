@@ -36,10 +36,11 @@ sudokuBoard.addEventListener("click", (e) => {
     selectedCell.col = e.target.dataset.col; 
     selectedCell.value = Number(e.target.innerText); 
     selectedCell.isOriginal = e.target.dataset.isOriginal === "true"; // Returns a boolean instead of a string. 
-    console.log(selectedCell); 
+    
     // Highlight the cell. 
     UI.focusCell(selectedCell); 
 }); 
+
 
 
 
@@ -65,8 +66,9 @@ numberSection.addEventListener("click", (e) => {
         board[selectedCell.row][selectedCell.col] = number; 
         UI.updateBoard(number, selectedCell); 
 
-        // Update the selectedCell variable with new value.
+        // Update the selectedCell variable with new value & change the cells isOriginal to false.
         selectedCell.value = number; 
+        selectedCell.isOriginal = false; 
 
         // Check to see if the game is over. 
         if (game.IsBoardFull() === true)
@@ -75,12 +77,14 @@ numberSection.addEventListener("click", (e) => {
             if (game.IsBoardValid() === true)
             {
                 // This is a winning board.
-                console.log("YOU WIN!!");
+                console.log("YOU WON!!");
+                alert("YOU WON!"); 
             } 
             else
             {
                 // This board is invald.
                 console.log("Try Again."); 
+                alert("Try Again."); 
             }
         };
     };
@@ -100,6 +104,9 @@ eraseBtn.addEventListener("click", () => {
     {
         // Remove this value from the board[]. 
         board[selectedCell.row][selectedCell.col] = EMPTY_CELL; 
+
+        // Update the cells value to be empty. 
+        selectedCell.value = EMPTY_CELL;
         
         // Update the board UI.
         UI.updateBoard(EMPTY_CELL, selectedCell); 

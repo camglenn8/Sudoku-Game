@@ -4,13 +4,13 @@ import { Sudoku } from "./game.js";
 import * as UI from "./ui.js"; 
 import * as EVENTS from "./events.js"; 
 
-// Instantiate a new Game object. 
+// Instantiate a new Sudoku object. 
 let sudoku = new Sudoku(); 
 
 // Generate a board. 
-let board = sudoku.GenerateBoard(DIFFICULTY.EASY); 
+let board = sudoku.GenerateBoard(DIFFICULTY.MEDIUM); 
 
-// Initialize the events (pass events the board). 
+// Initialize the events.
 EVENTS.init(sudoku, board);  
 
 // Display the board. 
