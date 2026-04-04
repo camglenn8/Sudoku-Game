@@ -27,7 +27,7 @@ export class Sudoku
     GenerateBoard(difficulty = DIFFICULTY.EASY)  
     {  
         // Initialize an empty board.
-        this.#CreateEmptyBoard(); 
+        this.#board = this.#CreateEmptyBoard(); 
         
         // Creates the combo and solves board. 
         this.SolveBoard(); 
@@ -105,7 +105,8 @@ export class Sudoku
 
 
     // Name         : SolveBoard
-    // Description  : This method is used to fill in all the empty cells on a board with valid values based on game rules.  
+    // Description  : This method is used to fill in all the empty cells on a board with valid values based on game rules. It uses recursion + backtracking
+    //                to place valid values in each cell. It also keeps track of all possible solutions.  
     // Parameters   : Void.
     // Return Values: bool true :   Upon completion. Otherwise, false. 
     SolveBoard()
@@ -144,7 +145,7 @@ export class Sudoku
             }; 
         };
 
-        // Wasn't able to place a valid number (backtracking). 
+        // Wasn't able to place a valid number (backtrack). 
         return false; 
     };
 
@@ -325,7 +326,7 @@ export class Sudoku
                 if (this.#board[row][col] !== this.#solutionBoard[row][col])
                 {
                     // Check to see if the players solution is still valid (even though it didn't match the puzzle exactly).
-                    if (IsAlternativeSolution() == true)
+                    if (this.IsAlternativeSolution() == true)
                     {
                         console.log("You found an alternative solution the puzzle!");  
                         return true; 
@@ -365,7 +366,7 @@ export class Sudoku
                 cell.col = c; 
 
                 // Assign the cells value. 
-                cell.value = this.board[r][c]; 
+                cell.value = this.#board[r][c]; 
 
                 // Set this cells value on the board to 0 (temporarily). 
                 this.#board[r][c] = EMPTY_CELL; 
@@ -374,6 +375,7 @@ export class Sudoku
                 if (this.IsValidInRow(cell.row, cell.value) && this.IsValidInCol(cell.col, cell.value) && this.IsValidInBox(cell, cell.value))
                 {
                     // This value is valid - continue onto the next value in the board. 
+                    this.#board[r][c] = cell.value; // Restore the value. 
                     continue; 
                 }
                 else
