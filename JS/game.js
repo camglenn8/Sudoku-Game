@@ -74,32 +74,72 @@ export class Sudoku
             let col = Math.floor(Math.random() * 9); 
 
             // Check to see if the current cell is empty at this position. 
-            if (this.#board[row][col] !== EMPTY_CELL)
+            if (this.#board[row][col] === EMPTY_CELL)
             {
-                // Remove the cell's value. 
-                this.#board[row][col] = EMPTY_CELL; 
-
-                // Find the mirrored cell positon using the current cell position.
-                let mirroredRow = 8 - row; 
-                let mirroredCol = 8 - col; 
-
-                // Check to see if the mirrored cell's value is empty  
-                if (this.#board[mirroredRow][mirroredCol] !== EMPTY_CELL)
-                {
-                    // Indicates that the mirrored cell is NOT empty.
-                    this.#board[mirroredRow][mirroredCol] = EMPTY_CELL;  
-                    cellCount -= 2;  
-                }
-                else
-                {
-                    // Indicates that the mirrored cell is already empty. (decrement the cellCount by 1).
-                    cellCount -= 1; 
-                }; 
+                // Keep looking for another value within the board.  
+                continue; 
             };
+
+            // Save the current cells valye BEFORE setting this value empty. 
+            let savedCellValue = this.#board[row][col];     // Save the value.
+            this.#board[row][col] = EMPTY_CELL;             // Clear the value. 
+
+            // Check the boards uniqueness (does it have more than 1 solution). 
+            if (this.SolutionCount() === 1)
+            {
+                // Indicates that the board only has 1 solution and is still unique. 
+                cellCount-- // Decrement the cellCount. 
+            }
+            else
+            {
+                // Indicates that the board now has multiple solutions (no longer unique). 
+                this.#board[row][col] = savedCellValue; // Restore the saved value. 
+            };
+
         };
 
         return; 
     };
+
+
+
+
+    SolutionCount(count = 0)
+    {
+        // Check to see if there is more than 1 solution. 
+        if (count > 1)
+        {
+            // Indicates that there is more than 1 solution. 
+            return count; 
+        };
+
+        // Find an empty cells position.
+        let cell = this.LocateEmptyCell(); 
+        if (cell.row === null && cell.col === null)
+        {
+            // Found a complete solution (no more empty cells left on the board). 
+            return count + 1; 
+        };
+
+        // Check to see if the value is valid in the boards row, col, and box at the current position. 
+        let values = [1,2,3,4,5,6,7,8,9]; 
+        for (let i = 0; i < 9; i++)
+        {
+            if (this.IsValidInRow(cell.row, values[i]) === true &&
+                this.IsValidInCol(cell.col, values[i]) === true &&
+                this.IsValidInBox(cell, values[i]) === true)
+            {
+                // Indicates that this value is valid at this cell's position.
+                this.#board[cell.row][cell.col] = values[i];    // Add the value to the board. 
+                count = this.SolutionCount(count);              // Recurse.
+                this.#board[cell.row][cell.col] = EMPTY_CELL;   // Empty the cell's value.  
+            };   
+        };
+
+        return count; 
+    };
+
+
 
 
 
@@ -381,6 +421,7 @@ export class Sudoku
                 else
                 {
                     // This solution is invalid. 
+                    this.#board[r][c] = cell.value; // Restore the cell's value. 
                     return false; 
                 }
             };

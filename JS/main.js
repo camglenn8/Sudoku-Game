@@ -8,7 +8,7 @@ import * as EVENTS from "./events.js";
 let sudoku = new Sudoku(); 
 
 // Generate a board. 
-let board = sudoku.GenerateBoard(DIFFICULTY.EASY); 
+let board = sudoku.GenerateBoard(DIFFICULTY.MEDIUM); 
 
 // Initialize the events.
 EVENTS.init(sudoku, board);  
