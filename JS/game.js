@@ -262,6 +262,33 @@ export class Sudoku
 
 
 
+    IsGameOver()
+    {
+        // Check to see if the game is over. 
+        if (this.IsBoardFull() === true)
+        {
+            // Check to see if its a winning board. 
+            if (this.IsBoardValid() === true)
+            {
+                // This is a winning board.
+                console.log("YOU WON!!");
+                alert("YOU WON!"); 
+                return true; 
+            } 
+            else
+            {
+                // This board is invald.
+              console.log("Try Again."); 
+              alert("Try Again.");
+                return false; 
+            };
+        }; 
+    };
+
+
+
+
+
     // Name         : IsBoardFull
     // Description  : This method is used to determine if the current games cells have all been filled with a number.
     // Parameters   : Void.
@@ -297,14 +324,69 @@ export class Sudoku
                 // Indicates a difference between the board and the soltionBoard, making the board invalid. 
                 if (this.#board[row][col] !== this.#solutionBoard[row][col])
                 {
+                    // Check to see if the players solution is still valid (even though it didn't match the puzzle exactly).
+                    if (IsAlternativeSolution() == true)
+                    {
+                        console.log("You found an alternative solution the puzzle!");  
+                        return true; 
+                    } 
+
                     return false; 
                 };
             };
         };
 
-        // This game is valid. 
+        // This game is valid.
+        console.log("Matched the puzzle perfectly!");  
         return true; 
     };
+
+
+
+
+
+
+    // Name         : IsAlternativeSolution
+    // Description  : This method is used to determine if the solved puzzle is an alternative solution to the original.
+    // Parameters   : Void.
+    // Return Values: bool true    : If the games a valid alternative solution. Otherwise, false.  
+    IsAlternativeSolution()
+    {
+        let cell = {row:undefined, col:undefined, value:undefined}; 
+        
+        for (let r = 0; r < 9; r++)
+        {
+            // Assign the cells row. 
+            cell.row = r; 
+
+            for (let c = 0; c < 9; c++)
+            {
+                // Assigns the cells column.
+                cell.col = c; 
+
+                // Assign the cells value. 
+                cell.value = this.board[r][c]; 
+
+                // Set this cells value on the board to 0 (temporarily). 
+                this.#board[r][c] = EMPTY_CELL; 
+
+                // Now check to see if the value is still correct in the row, col, and 3x3 box on the board. 
+                if (this.IsValidInRow(cell.row, cell.value) && this.IsValidInCol(cell.col, cell.value) && this.IsValidInBox(cell, cell.value))
+                {
+                    // This value is valid - continue onto the next value in the board. 
+                    continue; 
+                }
+                else
+                {
+                    // This solution is invalid. 
+                    return false; 
+                }
+            };
+        };
+
+        // This solution is valid. 
+        return true; 
+    }
 
 
 

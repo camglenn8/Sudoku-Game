@@ -71,22 +71,7 @@ numberSection.addEventListener("click", (e) => {
         selectedCell.isOriginal = false; 
 
         // Check to see if the game is over. 
-        if (game.IsBoardFull() === true)
-        {
-            // Check to see if its a winning board. 
-            if (game.IsBoardValid() === true)
-            {
-                // This is a winning board.
-                console.log("YOU WON!!");
-                alert("YOU WON!"); 
-            } 
-            else
-            {
-                // This board is invald.
-                console.log("Try Again."); 
-                alert("Try Again."); 
-            }
-        };
+        game.IsGameOver(); 
     };
 }); 
 
