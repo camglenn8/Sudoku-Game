@@ -18,44 +18,50 @@ export class Sudoku
         this.#board = this.#CreateEmptyBoard(); 
     }
 
-    // Methods.
-
     // Name         : GenerateBoard
     // Description  : This is used to initalize an empty board and generate a unique combo to fill the board with valid numbers. 
     // Parameters   : void.
     // Return Values: void. 
     GenerateBoard(difficulty = DIFFICULTY.EASY)  
     {  
-        // Initialize an empty board.
-        this.#board = this.#CreateEmptyBoard(); 
-        
-        // Creates the combo and solves board. 
-        this.SolveBoard(); 
-
-        // Copies the current board before removing the cells so you can see the solved game. 
-        this.#solutionBoard = this.#board.map(row => [...row]); 
-        console.log(this.#solutionBoard); 
-
-        // Remove cells based on the difficulty provided. 
-        switch (difficulty) 
+        while (true)
         {
-            case DIFFICULTY.EASY:
-                // Remove 35 cells from the board. 
-                this.RemoveCells(CELLS_TO_REMOVE.EASY);
-                break;
+            // Initialize an empty board.
+            this.#board = this.#CreateEmptyBoard(); 
             
-            case DIFFICULTY.MEDIUM:
-                // Remove 45 cells from the board.
-                this.RemoveCells(CELLS_TO_REMOVE.MEDIUM);
-                break;
-            
-            case DIFFICULTY.HARD:
-                // Remove 55 cells from the board. 
-                this.RemoveCells(CELLS_TO_REMOVE.HARD);
-                break; 
-        }; 
-        
-        return this.#board;  
+            // Creates the combo and solves board. 
+            this.SolveBoard(); 
+
+            // Copies the current board before removing the cells so you can see the solved game. 
+            this.#solutionBoard = this.#board.map(row => [...row]); 
+            console.log(this.#solutionBoard); 
+
+            // Remove cells based on the difficulty provided. 
+            switch (difficulty) 
+            {
+                case DIFFICULTY.EASY:
+                    // Remove 35 cells from the board. 
+                    this.RemoveCells(CELLS_TO_REMOVE.EASY);
+                    break;
+                
+                case DIFFICULTY.MEDIUM:
+                    // Remove 45 cells from the board.
+                    this.RemoveCells(CELLS_TO_REMOVE.MEDIUM);
+                    break;
+                
+                case DIFFICULTY.HARD:
+                    // Remove 55 cells from the board. 
+                    this.RemoveCells(CELLS_TO_REMOVE.HARD);
+                    break; 
+            }; 
+
+            // // Check to see if the generated puzzle is human solvable. If it's not - generate a new puzzle. 
+            if (this.IsHumanSolvable(difficulty) === true)
+            {
+                // Serve this puzzle.
+                return this.#board;  
+            };
+        };
     };
 
 
@@ -65,7 +71,7 @@ export class Sudoku
     // Description  : This method is removes x amount of cells from the board using the cellCount, depending on the provided difficulty.  
     // Parameters   : int cellCount :   This is the number of cells to remove from the board. 
     // Return Values: Void. 
-    RemoveCells(cellCount)
+    RemoveCells(cellCount) 
     {
         while (cellCount > 0)
         {
@@ -95,7 +101,6 @@ export class Sudoku
                 // Indicates that the board now has multiple solutions (no longer unique). 
                 this.#board[row][col] = savedCellValue; // Restore the saved value. 
             };
-
         };
 
         return; 
@@ -137,6 +142,316 @@ export class Sudoku
         };
 
         return count; 
+    };
+
+
+
+    
+    // Name         : GetCandidates
+    // Description  : This method is used to find potential candidates / valid values for the current cells position. It finds values that currently are 
+    //                NOT in the cells  row, col, or box. 
+    // Parameters   : int row   :   This is the current cells row. 
+    //                int col   :   This is the current cells column.  
+    // Return Values: int[]     :   Array of valid candidates numbers. 
+    GetCandidates(row, col) 
+    {
+        // This will store all unique values currently being used in the cell's row and column. 
+        let valuesUsed = new Set(); 
+
+        // Collect all column values in this current row.
+        for (let i = 0; i < 9; i++)
+        {
+            // i would be the different columns in this row. 
+            valuesUsed.add(this.#board[row][i]); 
+        }; 
+
+        // Collect all row values in this current column. 
+        for (let r = 0; r < 9; r++)
+        {
+            // i would be the different rows in this column.
+            valuesUsed.add(this.#board[r][col]); 
+        };
+
+        // Collect all vlaues already in this cell's 3x3 box. 
+        let startingRow = Math.floor(row / 3) * 3;  // Finds the current cells top left row of the box. 
+        let startingCol = Math.floor(col / 3) * 3;  // Finds the current cells top left column of the box.
+
+        // Collect all values currently inside this 3x3 box. 
+        for (let r = startingRow; r < startingRow + 3; r++)
+        {
+            for (let c = startingCol; c < startingCol + 3; c++)
+            {
+               // Add the value to the set. 
+               valuesUsed.add(this.#board[r][c]);
+            };
+        };
+
+        // Figure out which values are NOT currently being used (is a valid candidate). 
+        let candidates = [];    // Hold's all valid values for the cells row, col, and box. 
+
+        for (let i = 1; i <= 9; i++)
+        {
+            // Check to see if this value is already in the usedValues set. 
+            if (!valuesUsed.has(i))
+            {
+                // This value is a potential candidate - Add it to the candidates[].
+                candidates.push(i);  
+            };
+        };
+
+        return candidates; 
+    };
+
+
+
+
+
+    // Name         : SolveNakedSingles
+    // Description  : This method is used to scan the board looking for empty cells. Once found, it will look for any valid candidates to be placed
+    //                at that cells position. This will add a value if that value is the only one to possibly go in that position. 
+    // Parameters   : Void. 
+    // Return Values: bool true :   This indicates that values got added to the board. Otherwise, false. 
+    SolveNakedSingles()
+    {
+        // Tracks whether or not we placed any vlaues. 
+        let  progress = false; 
+
+        let madeProgress = true;
+        while (madeProgress === true)
+        {
+            // Used to reset the progess for this scan. 
+            madeProgress = false;
+               
+            // Find an empty cell (scan the entire board).
+            for (let row = 0; row < 9; row++)
+            {
+                for (let col = 0; col < 9; col++)
+                {
+                    // Skip any cells that are already  filled in.
+                    if (this.#board[row][col] !== EMPTY_CELL)
+                    {
+                        continue; 
+                    };
+
+                    // Get all the valid candidates.
+                    let candidates = this.GetCandidates(row, col); 
+
+                    
+                    // If only 1 candidate exists, this is a naked cell. 
+                    if (candidates.length === 1)
+                    {
+                        // Place the only 1 valid candidate (no other value can go here). 
+                        this.#board[row][col] = candidates[0]; 
+                        madeProgress = true;    // Placed a value -> find another empty cell. 
+                        progress = true;        // 
+                    };
+                };
+            };
+        };
+        // Returns true if we placed AT LEAST 1 value. Otherwise, the board didn't change. 
+        return progress;
+    };
+
+
+
+
+
+    SolveHiddenSingles()
+    {
+        let progress = false; 
+
+        let madeProgress = true;
+        while(madeProgress === true)
+        {
+            // Reset the progress.
+            madeProgress = false;
+
+            // --- ROWS ---
+            // For each row, check if a number can only go in one cell.
+            for(let row = 0; row < 9; row++)
+            {
+                for(let num = 1; num <= 9; num++)
+                {
+                    // Track which possible cells in this row can hold the 'num'. 
+                    let possibleCols = []; 
+
+                    for (let col = 0; col < 9; col++)
+                    {
+                        // Skip any filled cells.
+                        if (this.#board[row][col] !== EMPTY_CELL)
+                        {
+                            continue; 
+                        };
+
+                        // Check if 'num' is a valid candidate for this cell.
+                        let candidates = this.GetCandidates(row, col); 
+                        if (candidates.includes(num))
+                        {
+                            // This cell COULD hold 'num' (so remember it). 
+                            possibleCols.push(col); 
+                        };
+                    };
+
+                    // If only ONE cell in this row can hold 'num' - place it.
+                    if (possibleCols.length === 1)
+                    {
+                        this.#board[row][possibleCols[0]] = num;
+                        madeProgress = true; 
+                        progress = true; 
+                    };
+                };
+            };
+
+            // --- COLS ---
+            // For each col, check if a number can only go in one cell. 
+            for (let col = 0; col < 9; col++)
+            {
+                for (let num = 1; num <= 9; num++)
+                {
+                    // Track which possible cells in this column hold 'num'. 
+                    let possibleRows = []; 
+
+                    for (let row = 0; row < 9; row++)
+                    {
+                      // Skip any filled in cells.
+                      if (this.#board[row][col] !== EMPTY_CELL)
+                        {
+                            continue;
+                        };
+
+                        // Check if 'num' is a valid cnadidate for this cell.
+                        let candidates = this.GetCandidates(row, col); 
+                        if (candidates.includes(num))
+                        {
+                            // This cell COULD hold 'num' - remeber it. 
+                            possibleRows.push(row); 
+                        };  
+                    };
+
+                    // If only ONE cell in this column can hold 'num' - place it. 
+                    if (possibleRows.length === 1)
+                    {
+                        this.#board[possibleRows[0]][col] = num;
+                        madeProgress = true; 
+                        progress = true; 
+                    };   
+                };
+            };
+
+
+            // --- BOXES ---
+            // For each 3x3 box, check if a number can only go in one cell. 
+            for (let boxRow = 0; boxRow < 3; boxRow++)
+            {
+                for (let boxCol = 0; boxCol < 3; boxCol++)
+                {
+                    for (let num = 1; num <= 9; num++)
+                    {
+                        // Track which possible cells in this box can hold 'num'. 
+                        let possibleCells = []; 
+
+                        // Find the top-left corner of this box. 
+                        let startingRow = boxRow * 3; 
+                        let startingCol = boxCol * 3; 
+
+                        // Scan all 9 cells within this box. 
+                        for (let r = startingRow; r < startingRow + 3; r++)
+                        {
+                          for(let c = startingCol; c < startingCol + 3; c++)
+                          {
+                            // Check to see if this cell is empty.
+                            if (this.#board[r][c] !== EMPTY_CELL)
+                            {
+                                // Indicates an empty cell - skip and move onto next cell.
+                                continue;
+                            };
+
+                            // Check if 'num' is a valid candidates for this cell.
+                            let candidates = this.GetCandidates(r, c); 
+                            if (candidates.includes(num))
+                            {
+                                // This COULD hold 'num' - remember it.
+                                possibleCells.push({row:r, col:c});  
+                            };
+                          };
+                        };
+
+                        // If only 1 cell in this box can hold 'num' - place it. 
+                        if (possibleCells.length === 1)
+                        {
+                            this.#board[possibleCells[0].row][possibleCells[0].col] = num; 
+                            madeProgress = true;
+                            progress = true; 
+                        };
+                    };
+                };
+            };
+        };
+
+        return progress; 
+    };
+
+
+
+
+    // Name         : IsHumanSolvable
+    // Description  : Tests whether the current puzzle can be solved using only human logical techniques (naked singles,hidden singles, pairs), based on
+    //                the difficulty chosen. 
+    // Parameters   : String difficulty :   This is the chosen difficulty. 
+    // Return Values: bool true : If the puzzle is fully solvable with human logic. Otherwise false.
+    IsHumanSolvable(difficulty)
+    {
+        // Save a copy of the original board.
+        let realBoard = this.#board; 
+        this.#board = this.#board.map(row => [...row]);
+
+        // Apply all techniques until neither makes any progress - based on difficulty! 
+        let progress = true;
+        switch (difficulty) 
+            {
+                case DIFFICULTY.EASY:
+                     while (progress === true)
+                    {
+                         // Apply the Naked Singles technique. 
+                        let nakedProgress = this.SolveNakedSingles(); 
+
+                        // If neither technique placed any values - we're stuck.
+                        progress = nakedProgress;
+                    };
+                    break;
+
+                case DIFFICULTY.MEDIUM:
+                    while (progress === true)
+                    {
+                        // Apply the Naked Singles & Hidden singles technique. 
+                        let nakedProgress = this.SolveNakedSingles(); 
+                        let hiddenProgress = this.SolveHiddenSingles(); 
+
+                        // If neither technique placed any values - we're stuck.
+                        progress = nakedProgress || hiddenProgress;
+                    };
+                    break;
+                
+                case DIFFICULTY.HARD: 
+                     while (progress === true)
+                    {
+                        // Try the Naked Singles technique. 
+                        let nakedProgress = this.SolveNakedSingles(); 
+                        let hiddenProgress = this.SolveHiddenSingles(); 
+
+                        // If neither technique placed any values - we're stuck.
+                        progress = nakedProgress || hiddenProgress;
+                    };
+                    break; 
+            }; 
+
+        // Check if the board is completely filled in.
+        let solved = this.IsBoardFull(); 
+
+        // Restore the real board before returning. 
+        this.#board = realBoard; 
+
+        return solved; 
     };
 
 
@@ -302,7 +617,10 @@ export class Sudoku
 
 
 
-
+    // Name         : IsGaameOver
+    // Description  : This method is used to determine if the current game has been completed.
+    // Parameters   : Void.
+    // Return Values: Void.
     IsGameOver()
     {
         // Check to see if the game is over. 
