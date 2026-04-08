@@ -34,7 +34,6 @@ export class Sudoku
 
             // Copies the current board before removing the cells so you can see the solved game. 
             this.#solutionBoard = this.#board.map(row => [...row]); 
-            console.log(this.#solutionBoard); 
 
             // Remove cells based on the difficulty provided. 
             switch (difficulty) 
